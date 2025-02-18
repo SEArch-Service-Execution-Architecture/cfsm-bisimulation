@@ -4,6 +4,13 @@ class State:
         self.graph = graph
         self.id = id
         self.theory = theory
+        self.final = False
+
+    def set_as_final(self):
+        self.final = True
+
+    def is_final(self):
+        return self.final
 
     def __repr__(self):
         theory_str = ", ".join(map(str, self.theory))

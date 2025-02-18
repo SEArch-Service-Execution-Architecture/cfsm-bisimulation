@@ -10,6 +10,8 @@ from ...resources.cfsm.example_7 import cfsm_1 as cfsm_example_7_1, cfsm_2 as cf
 from ...resources.cfsm.example_8 import cfsm as cfsm_example_8
 from ...resources.cfsm.example_9 import cfsm_1 as cfsm_example_9_1, cfsm_2 as cfsm_example_9_2
 from ...resources.cfsm.example_10 import cfsm_1 as cfsm_example_10_1, cfsm_2 as cfsm_example_10_2
+from ...resources.cfsm.example_11 import cfsm_1 as cfsm_example_11_1, cfsm_2 as cfsm_example_11_2
+from ...resources.cfsm.example_12 import cfsm_1 as cfsm_example_12_1, cfsm_2 as cfsm_example_12_2
 from src.cfsm_bisimulation.models.communicating_system.action import Action
 from src.cfsm_bisimulation.models.assertable_finite_state_machines.assertion import Assertion
 from src.cfsm_bisimulation.models.stratified_bisimulation_strategies.knowledge import Knowledge
@@ -291,16 +293,69 @@ class CFSMTestCase(unittest.TestCase):
         q2 = cfsm_example_10_2.states['q2']
 
         expected_relation = set()
-        expected_matches = {
-            'participants': {'Consumer': 'Customer'},
-            'messages': {},
-            'variables': {}
-        }
 
         relation, matches = cfsm_example_10_1.calculate_bisimulation_with(cfsm_example_10_2, True)
         self.assertIsSubset(expected_relation, relation)
+
+    def test_must_be_bisimilar_when_final_states_match(self):
+        x = Int('x')
+        y = Int('y')
+        a = Int('a')
+        b = Int('b')
+        cpu_usage = Real('cpu_usage')
+        f_x = Message('f', payload=[x])
+        g_y = Message('g', payload=[y])
+        h1_a = Message('h1', payload=[a])
+        h2_b = Message('h2', payload=[b])
+
+        p0 = cfsm_example_11_1.states['p0']
+        p1 = cfsm_example_11_1.states['p1']
+        p2 = cfsm_example_11_1.states['p2']
+        q0 = cfsm_example_11_2.states['q0']
+        q1 = cfsm_example_11_2.states['q1']
+        q2 = cfsm_example_11_2.states['q2']
+
+        expected_relation = {
+            (_(p0), _(q0)),
+            (_(p1, x > 0), _(q1, a > 0)),
+            (_(p2, x > 0, true), _(q2, a > 0, true))
+        }
+
+        expected_matches = {
+            'participants': {'Consumer': 'Customer', 'Producer': 'Service'},
+            'messages': {
+                str(f_x): h1_a,
+                str(g_y): h2_b
+            },
+            'variables': {'x': a, 'y': b}
+        }
+
+        relation, matches = cfsm_example_11_1.calculate_bisimulation_with(cfsm_example_11_2, True)
+        self.assertIsSubset(expected_relation, relation)
         self.assertEqual(expected_matches, matches)
 
+    def test_must_not_be_bisimilar_when_final_states_dont_match(self):
+        x = Int('x')
+        y = Int('y')
+        a = Int('a')
+        b = Int('b')
+        cpu_usage = Real('cpu_usage')
+        f_x = Message('f', payload=[x])
+        g_y = Message('g', payload=[y])
+        h1_a = Message('h1', payload=[a])
+        h2_b = Message('h2', payload=[b])
+
+        p0 = cfsm_example_12_1.states['p0']
+        p1 = cfsm_example_12_1.states['p1']
+        p2 = cfsm_example_12_1.states['p2']
+        q0 = cfsm_example_12_2.states['q0']
+        q1 = cfsm_example_12_2.states['q1']
+        q2 = cfsm_example_12_2.states['q2']
+
+        expected_relation = set()
+
+        relation, matches = cfsm_example_12_1.calculate_bisimulation_with(cfsm_example_12_2, True)
+        self.assertIsSubset(expected_relation, relation)
 
 if __name__ == '__main__':
     unittest.main()

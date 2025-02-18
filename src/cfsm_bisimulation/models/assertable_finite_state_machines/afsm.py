@@ -26,10 +26,13 @@ class AFSM:
             
             self.add_state(state_id, theory)
 
-
     def set_as_initial(self, state_id):
         # validate exists
         self.initial_state = self.states[state_id]
+
+    def set_as_finals(self, *state_ids):
+        for state_id in state_ids:
+            self.states[state_id].set_as_final()
 
     # assertion must be a z3 assertion
     def add_transition_between(self, source_id, target_id, label, formula=TrueFormula):

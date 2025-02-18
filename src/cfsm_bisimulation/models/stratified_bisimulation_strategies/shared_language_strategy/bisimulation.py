@@ -82,13 +82,17 @@ class SharedLanguageBisimulationStrategy:
         self._disable_symmetric_mode_with(candidate_element)
 
         # stop propagation of bisimulation check if theories of states are not satisfiables.
-        if self._theories_are_satisfsable(candidate_element) and self.current_simulation.is_able_to_simulate():
+        if self._final_states_is_consistent(candidate_element) and self._theories_are_satisfsable(candidate_element) and self.current_simulation.is_able_to_simulate():
             self._enable_symmetric_mode_with(candidate_element)
 
             if self.current_simulation.is_able_to_simulate():
                 return True
 
         return False
+
+    def _final_states_is_consistent(self, candidate_element):
+        (simulated_state, _), (simulator_state, _) = candidate_element
+        return simulated_state.is_final() == simulator_state.is_final()
 
     def _theories_are_satisfsable(self, candidate_element):
         (simulated_state, _), (simulator_state, _) = candidate_element
