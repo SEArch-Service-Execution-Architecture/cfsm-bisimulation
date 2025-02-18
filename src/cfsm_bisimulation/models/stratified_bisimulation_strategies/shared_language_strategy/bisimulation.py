@@ -1,6 +1,7 @@
 from .simulation import SharedLanguageSimulationStrategy
 from ..initial_relation_builder import InitialRelationBuilder
 from ..knowledge import Knowledge
+from ..theory_equivalence_checker import TheoryEquivalenceChecker
 
 
 class SharedLanguageBisimulationStrategy:
@@ -11,6 +12,7 @@ class SharedLanguageBisimulationStrategy:
         self.symmetric_mode = False
         self.current_relation = None
         self.current_simulation = None
+        self.theory_equivalence_checker = TheoryEquivalenceChecker()
 
     def execute(self, minimize):
         self._set_initial_relation_as_current()
@@ -79,13 +81,18 @@ class SharedLanguageBisimulationStrategy:
     def _is_a_bisimulation(self, candidate_element):
         self._disable_symmetric_mode_with(candidate_element)
 
-        if self.current_simulation.is_able_to_simulate():
+        # stop propagation of bisimulation check if theories of states are not satisfiables.
+        if self._theories_are_satisfsable(candidate_element) and self.current_simulation.is_able_to_simulate():
             self._enable_symmetric_mode_with(candidate_element)
 
             if self.current_simulation.is_able_to_simulate():
                 return True
 
         return False
+
+    def _theories_are_satisfsable(self, candidate_element):
+        (simulated_state, _), (simulator_state, _) = candidate_element
+        return self.theory_equivalence_checker.check(simulated_state, simulator_state)
 
     def _enable_symmetric_mode_with(self, candidate_element):
         self.symmetric_mode = True
