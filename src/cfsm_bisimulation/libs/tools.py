@@ -1,7 +1,9 @@
+import re
 from itertools import chain, combinations
-from z3 import BoolVal, is_var, is_app_of, is_app, Z3_OP_UNINTERPRETED
+from z3 import BoolVal, is_var, is_app, is_app_of, is_quantifier, Z3_OP_UNINTERPRETED
 
 TrueFormula = BoolVal(True)
+BoundVariablePattern = r"Var\(\d+\)"
 
 
 def powerset(s):
@@ -11,29 +13,25 @@ def powerset(s):
     return list(map(frozenset, chain.from_iterable(combinations(s, r) for r in range(len(s)+1))))
 
 
-# def collect_variables(assertion):
-#     variables = set()
-#
-#     if len(assertion.children()) > 0:
-#         for child in assertion.children():
-#             variables = variables.union(collect_variables(child))
-#     else:
-#         variables.add(assertion)
-#
-#     return variables
-
 def collect_variables(expression):
-    if is_var(expression):
+    if is_quantifier(expression):
+        return collect_variables(expression.body())
+    
+    elif is_var(expression):
+        if re.match(BoundVariablePattern, str(expression)):
+            return set()
         return {expression}
-    elif is_app_of(expression, Z3_OP_UNINTERPRETED):
+
+    elif is_app_of(expression, Z3_OP_UNINTERPRETED) and expression.num_args() == 0:
         return {expression}
+
     elif is_app(expression):
         variables = set()
         for arg in expression.children():
             variables |= collect_variables(arg)
         return variables
-    else:
-        return set()
+
+    return set()
 
 
 # Devuelve un conjunto con las assertions cuyas variables no son las del "label".
