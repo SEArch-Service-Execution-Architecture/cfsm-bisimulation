@@ -13,8 +13,7 @@ class State:
         return self.final
 
     def __repr__(self):
-        theory_str = ", ".join(map(str, self.theory))
-        return f'({self.id}, [{theory_str}])'
+        return str(self.id)
 
     def get_transitions(self):
         return self.graph.transitions_of(self.id)

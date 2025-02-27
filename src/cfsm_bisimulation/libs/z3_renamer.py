@@ -63,4 +63,6 @@ def rename_comparison(comparison, renames):
 
 
 def rename_variable(variable, renames):
+    if not (str(variable) in renames):
+        return str(variable)
     return renames[str(variable)]

@@ -19,9 +19,9 @@ class CommunicatingFiniteStateMachine(AFSM):
         string = ''
         for source_id, transitions in self.transitions_by_source_id.items():
             if self.initial_state is not  None and self.initial_state.id == source_id:
-                string += f'-> {source_id}: [\n'
+                string += f'-> ({source_id}, {self.states[source_id].theory}): [\n'
             else:
-                string += f'{source_id}: [\n'
+                string += f'({source_id}, {self.states[source_id].theory}): [\n'
 
             for transition in transitions:
                 string += f'  {transition},\n'
