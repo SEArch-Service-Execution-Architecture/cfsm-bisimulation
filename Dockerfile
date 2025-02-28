@@ -15,4 +15,4 @@ WORKDIR /app/cfsm-bisimulation
 
 RUN ls -la && pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["python", "-m"]
+ENTRYPOINT ["python", "-m", "run_coordination_2025.py"]
