@@ -6,7 +6,7 @@ print("Running bisimulation test with models C_pop and C'_pop. At the end, the s
 
 start = time.time()
 
-relation, matches = e_cfsm_1.calculate_bisimulation_with(c_pop_2)
+relation, matches = e_cfsm_1.calculate_bisimulation_with(e_cfsm_2)
 
 end = time.time()
 
