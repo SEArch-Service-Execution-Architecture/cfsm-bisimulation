@@ -9,10 +9,12 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-RUN git clone --single-branch --branch coordination_improvements https://github.com/SEArch-Service-Execution-Architecture/cfsm-bisimulation.git
+RUN git clone --single-branch --depth=1 --branch coordination_improvements https://github.com/SEArch-Service-Execution-Architecture/cfsm-bisimulation.git
 
 WORKDIR /app/cfsm-bisimulation
 
+RUN git pull
+
 RUN ls -la && pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["python", "-m", "run_coordination_2025.py"]
+CMD ["python", "run_coordination_2025.py"]

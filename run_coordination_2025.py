@@ -4,8 +4,7 @@ import time
 
 start = time.time()
 
-# relation, matches = e_cfsm_1.calculate_bisimulation_with(c_pop_2)
-print("prueba")
+relation, matches = e_cfsm_1.calculate_bisimulation_with(c_pop_2)
 
 end = time.time()
 
