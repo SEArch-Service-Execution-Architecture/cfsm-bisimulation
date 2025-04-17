@@ -79,13 +79,17 @@ class SharedLanguageBisimulationStrategy:
     def _is_a_bisimulation(self, candidate_element):
         self._disable_symmetric_mode_with(candidate_element)
 
-        if self.current_simulation.is_able_to_simulate():
+        if self._final_states_is_consistent(candidate_element) and self.current_simulation.is_able_to_simulate():
             self._enable_symmetric_mode_with(candidate_element)
 
             if self.current_simulation.is_able_to_simulate():
                 return True
 
         return False
+
+    def _final_states_is_consistent(self, candidate_element):
+        (simulated_state, _), (simulator_state, _) = candidate_element
+        return simulated_state.is_final() == simulator_state.is_final()
 
     def _enable_symmetric_mode_with(self, candidate_element):
         self.symmetric_mode = True
