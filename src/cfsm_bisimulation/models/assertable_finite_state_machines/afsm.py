@@ -12,14 +12,19 @@ class AFSM:
         self.transitions_by_source_id = {}
         self.initial_state = None
 
-    def add_state(self, state_id):
+    def add_state(self, state_id, theory=[]):
         # validate not present
-        self.states[state_id] = State(self, state_id)
+        self.states[state_id] = State(self, state_id, theory)
         self.transitions_by_source_id[state_id] = []
 
-    def add_states(self, *ids):
-        for state_id in ids:
-            self.add_state(state_id)
+    def add_states(self, *states):
+        for state in states:
+            if isinstance(state, tuple):
+                state_id, theory = state
+            else:
+                state_id, theory = state, []
+            
+            self.add_state(state_id, theory)
 
     def set_as_initial(self, state_id):
         # validate exists
