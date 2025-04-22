@@ -1,4 +1,4 @@
-from z3 import Solver, Not, unsat
+from z3 import Solver, Not, Or, Implies, unsat
 from ....libs.tools import powerset
 from ..shared_language_strategy.simulation import SharedLanguageSimulationStrategy
 
@@ -31,11 +31,5 @@ class NonSharedLanguageSimulationStrategy(SharedLanguageSimulationStrategy):
 
         return valid_transitions_set_exists
 
-    def _is_able_to_simulate_knowledge(self, simulator_assertion, cleaned_simulated_knowledge, cleaned_simulator_knowledge):
-        simulated_knowledge = self.matched_cleaned_simulated_knowledge.union(cleaned_simulator_knowledge)
-        simulator_knowledge = cleaned_simulator_knowledge.add(simulator_assertion)
-
-        implication = simulated_knowledge.build_implication_with(simulator_knowledge)
-        solver = Solver()
-
-        return solver.check(Not(implication)) == unsat
+    def _simulated_formula_from(self, cleaned_simulated_knowledge):
+        return self.matched_cleaned_simulated_knowledge.add(self.simulated_transition.assertion).build_conjunction()

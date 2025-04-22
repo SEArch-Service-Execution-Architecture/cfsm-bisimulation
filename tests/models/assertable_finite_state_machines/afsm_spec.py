@@ -4,6 +4,10 @@ from tests.resources.afsm.afsm_example_2_1 import afsm_example_2_1
 from tests.resources.afsm.afsm_example_2_2 import afsm_example_2_2
 from tests.resources.afsm.afsm_example_3_1 import afsm_example_3_1
 from tests.resources.afsm.afsm_example_3_2 import afsm_example_3_2
+from tests.resources.afsm.afsm_example_4_1 import afsm_example_4_1
+from tests.resources.afsm.afsm_example_4_2 import afsm_example_4_2
+from tests.resources.afsm.afsm_example_5_1 import afsm_example_5_1
+from tests.resources.afsm.afsm_example_5_2 import afsm_example_5_2
 from src.cfsm_bisimulation.models.assertable_finite_state_machines.assertion import Assertion
 from src.cfsm_bisimulation.models.stratified_bisimulation_strategies.knowledge import Knowledge
 from z3 import Int, BoolVal
@@ -58,27 +62,27 @@ class AFSMCase(unittest.TestCase):
         p0 = afsm_example_3_1.states['p0']
         p1 = afsm_example_3_1.states['p1']
         p2 = afsm_example_3_1.states['p2']
-        p3 = afsm_example_3_1.states['p3']
         q0 = afsm_example_3_2.states['q0']
         q1 = afsm_example_3_2.states['q1']
         q2 = afsm_example_3_2.states['q2']
-        q3 = afsm_example_3_2.states['q3']
-        q4 = afsm_example_3_2.states['q4']
 
         expected_relation = {
             (_(p0), _(q0)),
             (_(p1, x != 0), _(q1, x != 0)),
-            (_(p2, x != 0, true), _(q2, x != 0, x > 0)),
-            (_(p3, x != 0, true), _(q4, x != 0, x > 0, true)),
-            (_(p2, x != 0, true), _(q3, x != 0, x < 0)),
-            (_(p3, x != 0, true), _(q4, x != 0, x < 0, true))
+            (_(p2, x != 0,), _(q2, x > 0, x != 0)),
+            (_(p2, x != 0), _(q2, x < 0, x != 0))
         }
 
-        relation = afsm_example_3_1.calculate_bisimulation_with(afsm_example_3_2)
+        relation = afsm_example_3_1.calculate_bisimulation_with(afsm_example_3_2, True)
         self.assertIsSubset(expected_relation, relation)
 
-    def test_relation_must_be_empty_when_are_not_bisimilars(self):
-        relation = afsm_example_1.calculate_bisimulation_with(afsm_example_2_1)
+    # this case breaks the algorithm when machines are not minimals.
+    def test_must_be_not_bisimilars_example_4(self):
+        relation = afsm_example_4_1.calculate_bisimulation_with(afsm_example_4_2)
+        self.assertEqual(set(), relation)
+
+    def test_must_be_not_bisimilars_example_5(self):
+        relation = afsm_example_5_1.calculate_bisimulation_with(afsm_example_5_2)
         self.assertEqual(set(), relation)
 
 
